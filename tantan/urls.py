@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
-import api
+from django.urls import path
+from api import rapi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls'))
+    path('api/login', rapi.Login.as_view()),
+    path('api/verify', rapi.get_verify_code),
+    path('api/profile', rapi.Profile.as_view()),
 ]
