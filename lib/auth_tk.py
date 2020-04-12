@@ -8,7 +8,13 @@ from rest_framework.authentication import BaseAuthentication
 class JwtQueryParamsAuthentication(BaseAuthentication):
 
     def authenticate(self, request):
-        token = request.query_params.get('token')
+        token = ''
+        if request.method == 'GET':
+            token = request.query_params.get('token')
+        elif request.method == 'POST':
+            token = request.POST.get('token')
+        else:
+            print('不支持的请求方式')
         # 1.切割 2.解密第二段、判断是否过期 3.验证第三段合法性
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, True)

@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
-from api.models import User
+
+from api.forms import ProfileForm, UserForm
+from api.models import User, Profile
 
 from api.logic import send_sms, check_vcode, create_token
 from common import error
@@ -10,8 +12,10 @@ def get_verify_code(request):
     """获取验证码"""
     # authentication_classes = []
     phone = request.GET.get('phone')
-    vcode = send_sms(phone)
-    return render_json(vcode)
+    send_sms(phone)
+    # print(vcode)
+    return render_json(None)
+    # return send_sms(phone)
 
 
 class Login(APIView):
@@ -38,7 +42,7 @@ class Login(APIView):
         return render_json(token)
 
 
-class Profile(APIView):
+class GetProfile(APIView):
     # authentication_classes = [JwtQueryParamsAuthentication, ]
     """用户资料"""
 
@@ -49,3 +53,34 @@ class Profile(APIView):
         user = User.objects.get(id=payload['id'])
 
         return render_json(user.to_dict)
+
+
+class ModifyProfile(APIView):
+    """修改个人配置资料"""
+
+    @staticmethod
+    def post(request):
+        form = ProfileForm(request.POST)
+        resp = modify_model(request, form, Profile)
+        return resp
+
+
+class ModifyUser(APIView):
+    """修改个人资料"""
+
+    @staticmethod
+    def post(request):
+        form = UserForm(request.POST)
+        resp = modify_model(request, form, User)
+        return resp
+
+
+def modify_model(request, form, cls):
+    if form.is_valid():
+        payload = request.user
+        user = cls.objects.get(id=payload['id'])
+        user.__dict__.update(form.cleaned_data)
+        user.save()
+        return render_json(None)
+    else:
+        return render_json(form.errors, error.PROFILE_ERROR)

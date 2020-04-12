@@ -2,6 +2,7 @@ import datetime
 import random
 
 import jwt
+# import requests
 from django.conf import settings
 from django.core.cache import cache
 
@@ -21,6 +22,7 @@ def send_sms(phone):
     vcode = str(gen_verify_code())
     key = 'VerifyCode-%s' % phone
     cache.set(key, vcode, 300)
+    # print(cache.get(key))
     sms_config = config.HY_SMS_PARAMS.copy()
     sms_config['msg'] = sms_config['msg'] % vcode
     sms_config['mobile'] = phone
@@ -34,6 +36,8 @@ def check_vcode(phone, vcode):
     """检查验证码是否正确"""
     key = 'VerifyCode-%s' % phone
     saved_vcode = cache.get(key)
+    # print(vcode)
+    # print(saved_vcode)
     return saved_vcode == vcode
 
 
