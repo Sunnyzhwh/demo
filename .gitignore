@@ -3,3 +3,4 @@ __pycache__
 .bash_profile
 .venv
 db.sqlite3
+static
