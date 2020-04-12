@@ -1,5 +1,7 @@
 import datetime
+import os
 import random
+from urllib.parse import urljoin
 
 import jwt
 # import requests
@@ -50,3 +52,16 @@ def create_token(data, timeout=1):
     data['exp'] = datetime.datetime.utcnow() + datetime.timedelta(days=timeout)
     result = jwt.encode(payload=data, key=salt, headers=headers).decode('utf-8')
     return result
+
+
+def save_upload_file(file, user):
+    ext_name = os.path.splitext(file.name)[-1]
+    filename = 'Avatar-%s%s' % (user.id, ext_name)
+    filepath = os.path.join(settings.BASE_DIR, 'static', 'avatar', filename)
+    static_path = os.path.join('static', 'avatar', filename)
+    with open(filepath, 'wb') as new_file:
+        for chunk in file.chunks():
+            new_file.write(chunk)
+    host = 'http://127.0.0.1:8000'
+    url = urljoin(host, static_path)
+    return url

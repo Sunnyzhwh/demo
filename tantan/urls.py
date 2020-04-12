@@ -13,7 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# from django.conf import settings
 from django.contrib import admin
+# from django.contrib.staticfiles import views
 from django.urls import path
 from api import rapi
 
@@ -24,4 +26,10 @@ urlpatterns = [
     path('api/profile', rapi.GetProfile.as_view()),
     path('api/modify/profile', rapi.ModifyProfile.as_view()),
     path('api/modify/user', rapi.ModifyUser.as_view()),
+    path('api/upload/avatar', rapi.UploadAvatar.as_view()),
 ]
+
+# if settings.DEBUG:
+#     urlpatterns += [
+#         re_path(r'^static/(?P<path>.*)$', views.serve),
+#     ]

@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from api.forms import ProfileForm, UserForm
 from api.models import User, Profile
 
-from api.logic import send_sms, check_vcode, create_token
+from api.logic import send_sms, check_vcode, create_token, save_upload_file
 from common import error
 from lib.http import render_json
 
@@ -73,6 +73,21 @@ class ModifyUser(APIView):
         form = UserForm(request.POST)
         resp = modify_model(request, form, User)
         return resp
+
+
+class UploadAvatar(APIView):
+    @staticmethod
+    def post(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        file = request.FILES.get('avatar')
+        if file:
+            url = save_upload_file(file, user)
+            user.avatar = url
+            user.save()
+            return render_json(None)
+        else:
+            return render_json(None, error.FILE_NOT_FOUND)
 
 
 def modify_model(request, form, cls):
