@@ -91,6 +91,7 @@ class UploadAvatar(APIView):
 
 
 def modify_model(request, form, cls):
+    """修改表格数据"""
     if form.is_valid():
         payload = request.user
         user = cls.objects.get(id=payload['id'])
