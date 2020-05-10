@@ -29,7 +29,7 @@ class Like(APIView):
     def post(request):
         payload = request.user
         user = User.objects.get(id=payload['id'])
-        sid = request.POST.get('sid')
+        sid = int(request.POST.get('sid'))
         is_matched = like(user, sid)
         return render_json({'is_matched': is_matched})
 
@@ -41,7 +41,7 @@ class SuperLike(APIView):
     def post(request):
         payload = request.user
         user = User.objects.get(id=payload['id'])
-        sid = request.POST.get('sid')
+        sid = int(request.POST.get('sid'))
         is_matched = superlike(user, sid)
         return render_json({'is_matched': is_matched})
 
@@ -53,7 +53,7 @@ class Dislike(APIView):
     def post(request):
         payload = request.user
         user = User.objects.get(id=payload['id'])
-        sid = request.POST.get('sid')
+        sid = int(request.POST.get('sid'))
         dislike(user, sid)
         return render_json(None)
 
@@ -65,7 +65,7 @@ class Rewind(APIView):
     def post(request):
         payload = request.user
         user = User.objects.get(id=payload['id'])
-        sid = request.POST.get('sid')
+        sid = int(request.POST.get('sid'))
         rewind(user, sid)
         return render_json(None)
 
@@ -78,5 +78,5 @@ class FriendsList(APIView):
         payload = request.user
         user = User.objects.get(id=payload['id'])
         my_friends = Friend.friends(user.id)
-        friends_info = {friend.to_dict() for friend in my_friends}
+        friends_info = [friend.to_dict for friend in my_friends]
         return render_json({'friends': friends_info})

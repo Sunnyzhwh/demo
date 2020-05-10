@@ -25,7 +25,7 @@ def like(user, sid):
     # 标记一个滑动记录
     Swiped.mark(user.id, sid, 'like')
     # 检查被滑动的用户是否喜欢过自己
-    if Swiped.is_liked(user.id, sid):
+    if Swiped.is_liked(sid, user.id):
         Friend.be_friends(user.id, sid)
         return True
     else:
@@ -36,7 +36,7 @@ def superlike(user, sid):
     # 标记一个滑动记录
     Swiped.mark(user.id, sid, 'superlike')
     # 检查被滑动的用户是否喜欢过自己
-    if Swiped.is_liked(user.id, sid):
+    if Swiped.is_liked(sid, user.id):
         Friend.be_friends(user.id, sid)
         return True
     else:

@@ -54,13 +54,13 @@ class User(models.Model):
             'phone': self.phone,
             'sex': self.sex,
             'nickname': self.nickname,
-            'avatar': self.avatar,
+            # 'avatar': self.avatar,
             'location': self.location,
             'age': self.age,
-            'birth_year': self.birth_year,
-            'birth_month': self.birth_month,
-            'birth_day': self.birth_day,
-            'profile': [self.profile.to_dict()],
+            # 'birth_year': self.birth_year,
+            # 'birth_month': self.birth_month,
+            # 'birth_day': self.birth_day,
+            # 'profile': [self.profile.to_dict()],
         }
         return dicts
 
