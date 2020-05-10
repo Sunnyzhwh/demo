@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from api.models import User
 from lib.http import render_json
 
-from social.logic import get_rcmd_users
+from social.logic import get_rcmd_users, like, superlike, dislike, rewind
+from social.models import Friend
 
 
 class GetRecommendUsers(APIView):
@@ -21,24 +22,61 @@ class GetRecommendUsers(APIView):
         return render_json(result)
 
 
-
-
-
-def like(request):
+class Like(APIView):
     """喜欢"""
-    return render_json()
+
+    @staticmethod
+    def post(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        sid = request.POST.get('sid')
+        is_matched = like(user, sid)
+        return render_json({'is_matched': is_matched})
 
 
-def superlike(request):
+class SuperLike(APIView):
     """超级喜欢"""
-    return render_json()
+
+    @staticmethod
+    def post(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        sid = request.POST.get('sid')
+        is_matched = superlike(user, sid)
+        return render_json({'is_matched': is_matched})
 
 
-def dislike(request):
+class Dislike(APIView):
     """不喜欢"""
-    return render_json()
+
+    @staticmethod
+    def post(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        sid = request.POST.get('sid')
+        dislike(user, sid)
+        return render_json(None)
 
 
-def rewind(request):
+class Rewind(APIView):
     """反悔"""
-    return render_json()
+
+    @staticmethod
+    def post(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        sid = request.POST.get('sid')
+        rewind(user, sid)
+        return render_json(None)
+
+
+class FriendsList(APIView):
+    """好友列表"""
+
+    @staticmethod
+    def get(request):
+        payload = request.user
+        user = User.objects.get(id=payload['id'])
+        my_friends = Friend.friends(user.id)
+        friends_info = {friend.to_dict() for friend in my_friends}
+        return render_json({'friends': friends_info})

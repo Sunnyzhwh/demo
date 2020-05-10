@@ -1,6 +1,7 @@
 import datetime
 
 from api.models import User
+from social.models import Swiped, Friend
 
 
 def get_rcmd_users(user):
@@ -18,3 +19,41 @@ def get_rcmd_users(user):
                                 birth_year__gte=min_year,
                                 birth_year__lte=max_year)
     return users
+
+
+def like(user, sid):
+    # 标记一个滑动记录
+    Swiped.mark(user.id, sid, 'like')
+    # 检查被滑动的用户是否喜欢过自己
+    if Swiped.is_liked(user.id, sid):
+        Friend.be_friends(user.id, sid)
+        return True
+    else:
+        return False
+
+
+def superlike(user, sid):
+    # 标记一个滑动记录
+    Swiped.mark(user.id, sid, 'superlike')
+    # 检查被滑动的用户是否喜欢过自己
+    if Swiped.is_liked(user.id, sid):
+        Friend.be_friends(user.id, sid)
+        return True
+    else:
+        return False
+
+
+def dislike(user, sid):
+    Swiped.mark(user.id, sid, 'dislike')
+
+
+def rewind(user, sid):
+    """反悔"""
+    try:
+        # 取消滑动记录
+        Swiped.objects.get(uid=user.id, sid=sid).delete()
+    except Swiped.DoesNotExist:
+        pass
+
+    # 撤销好友关系
+    Friend.break_off(user.id, sid)

@@ -30,6 +30,11 @@ urlpatterns = [
     path('api/upload/avatar', rapi.UploadAvatar.as_view()),
 
     path('api/social/recommend', sapi.GetRecommendUsers.as_view()),
+    path('api/social/like', sapi.Like.as_view()),
+    path('api/social/superlike', sapi.SuperLike.as_view()),
+    path('api/social/dislike', sapi.Dislike.as_view()),
+    path('api/social/rewind', sapi.Rewind.as_view()),
+    path('api/social/friends', sapi.FriendsList.as_view()),
 ]
 
 # if settings.DEBUG:
