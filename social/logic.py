@@ -1,8 +1,11 @@
 import datetime
+import logging
 
 from VIP.logic import perm_require
 from api.models import User
 from social.models import Swiped, Friend
+
+log = logging.getLogger('inf')
 
 
 def get_rcmd_users(user):
@@ -25,6 +28,7 @@ def get_rcmd_users(user):
 def like(user, sid):
     # 标记一个滑动记录
     Swiped.mark(user.id, sid, 'like')
+    log.info(f'{user.id} like {sid}')
     # 检查被滑动的用户是否喜欢过自己
     if Swiped.is_liked(sid, user.id):
         Friend.be_friends(user.id, sid)
@@ -37,6 +41,7 @@ def like(user, sid):
 def superlike(user, sid):
     # 标记一个滑动记录
     Swiped.mark(user.id, sid, 'superlike')
+    log.info(f'{user.id} superlike {sid}')
     # 检查被滑动的用户是否喜欢过自己
     if Swiped.is_liked(sid, user.id):
         Friend.be_friends(user.id, sid)
@@ -47,6 +52,7 @@ def superlike(user, sid):
 
 def dislike(user, sid):
     Swiped.mark(user.id, sid, 'dislike')
+    log.info(f'{user.id} dislike {sid}')
 
 
 @perm_require('rewind')
