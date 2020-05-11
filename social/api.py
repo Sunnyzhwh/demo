@@ -43,7 +43,10 @@ class SuperLike(APIView):
         user = User.objects.get(id=payload['id'])
         sid = int(request.POST.get('sid'))
         is_matched = superlike(user, sid)
-        return render_json({'is_matched': is_matched})
+        if type(is_matched) == bool:
+            return render_json({'is_matched': is_matched})
+        else:
+            return is_matched
 
 
 class Dislike(APIView):
@@ -66,8 +69,10 @@ class Rewind(APIView):
         payload = request.user
         user = User.objects.get(id=payload['id'])
         sid = int(request.POST.get('sid'))
-        rewind(user, sid)
-        return render_json(None)
+        if rewind(user, sid):
+            return rewind(user, sid)
+        else:
+            return render_json(None)
 
 
 class FriendsList(APIView):

@@ -1,5 +1,6 @@
 import datetime
 
+from VIP.logic import perm_require
 from api.models import User
 from social.models import Swiped, Friend
 
@@ -32,6 +33,7 @@ def like(user, sid):
         return False
 
 
+@perm_require('superlike')
 def superlike(user, sid):
     # 标记一个滑动记录
     Swiped.mark(user.id, sid, 'superlike')
@@ -47,6 +49,7 @@ def dislike(user, sid):
     Swiped.mark(user.id, sid, 'dislike')
 
 
+@perm_require('rewind')
 def rewind(user, sid):
     """反悔"""
     try:

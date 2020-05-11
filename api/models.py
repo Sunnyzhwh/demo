@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.utils.functional import cached_property
 
+from VIP.models import Vip
 from lib.orm import ModelMixin
 
 
@@ -16,7 +17,7 @@ class User(models.Model):
     nickname = models.CharField(verbose_name='昵称', unique=True, max_length=32, null=True)
     pwd = models.CharField(verbose_name='密码', max_length=64)
     token = models.CharField(
-        max_length=64, verbose_name='授权令牌', blank=True, null=True)
+        max_length=255, verbose_name='授权令牌', blank=True, null=True)
     sex = models.CharField(max_length=8, choices=SEX_CHOICE, default='男')
     avatar = models.CharField(max_length=256, null=True)
     location = models.CharField(max_length=32, default='北京')
@@ -24,6 +25,8 @@ class User(models.Model):
     birth_year = models.IntegerField(default=2000)
     birth_month = models.IntegerField(default=1)
     birth_day = models.IntegerField(default=1)
+
+    vip_id = models.IntegerField(default=1)
 
     # 计算年龄,缓存属性，属于Django里面的装饰器
     @cached_property
@@ -44,6 +47,12 @@ class User(models.Model):
             self._profile, _ = Profile.objects.get_or_create(id=self.id)
         return self._profile
 
+    @property
+    def vip(self):
+        if not hasattr(self, '_vip'):
+            self._vip = Vip.objects.get(id=self.vip_id)
+        return self._vip
+
     def __str__(self):
         return self.nickname
 
@@ -57,6 +66,7 @@ class User(models.Model):
             # 'avatar': self.avatar,
             'location': self.location,
             'age': self.age,
+            'vip': self.vip_id,
             # 'birth_year': self.birth_year,
             # 'birth_month': self.birth_month,
             # 'birth_day': self.birth_day,
