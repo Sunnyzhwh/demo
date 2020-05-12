@@ -54,7 +54,8 @@ def create_token(data, timeout=1):
     return result
 
 
-def save_upload_file(file, user):
+def save_upload_file(request, file, user):
+    print(request)
     ext_name = os.path.splitext(file.name)[-1]
     filename = 'Avatar-%s%s' % (user.id, ext_name)
     filepath = os.path.join(settings.BASE_DIR, 'static', 'avatar', filename)
@@ -62,6 +63,6 @@ def save_upload_file(file, user):
     with open(filepath, 'wb') as new_file:
         for chunk in file.chunks():
             new_file.write(chunk)
-    host = 'http://127.0.0.1:8000'
+    host = 'http://%s' % request.get_host()
     url = urljoin(host, static_path)
     return url

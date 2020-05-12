@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from rest_framework.views import APIView
 
 from api.forms import ProfileForm, UserForm
@@ -51,8 +52,15 @@ class GetProfile(APIView):
         payload = request.user
         # token = request.auth
         user = User.objects.get(id=payload['id'])
-
-        return render_json(user.to_dict)
+        key = 'profile-%s' % user.id
+        cache_profile = cache.get(key)  # 首先从缓存中获取数据
+        print('从缓存中获取：%s' % cache_profile)
+        if not cache_profile:
+            cache_profile = user.to_dict  # 缓存中没有，从数据库获取
+            print('从数据库中获取： %s' % cache_profile)
+            cache.set(key, cache_profile)  # 将数据添加到缓存，方便下次获取
+            print('添加到缓存')
+        return render_json(cache_profile)
 
 
 class ModifyProfile(APIView):
@@ -82,9 +90,13 @@ class UploadAvatar(APIView):
         user = User.objects.get(id=payload['id'])
         file = request.FILES.get('avatar')
         if file:
-            url = save_upload_file(file, user)
+            url = save_upload_file(request, file, user)
             user.avatar = url
             user.save()
+
+            # 修改缓存
+            key = 'profile-%s' % user.id
+            cache.set(key, user.to_dict)
             return render_json(None)
         else:
             return render_json(None, error.FILE_NOT_FOUND)
@@ -94,9 +106,14 @@ def modify_model(request, form, cls):
     """修改表格数据"""
     if form.is_valid():
         payload = request.user
-        user = cls.objects.get(id=payload['id'])
-        user.__dict__.update(form.cleaned_data)
-        user.save()
+        obj = cls.objects.get(id=payload['id'])
+        user = User.objects.get(id=obj.id)
+        obj.__dict__.update(form.cleaned_data)
+        obj.save()
+
+        # 修改缓存
+        key = 'profile-%s' % user.id
+        cache.set(key, user.to_dict)
         return render_json(None)
     else:
         return render_json(form.errors, error.PROFILE_ERROR)
