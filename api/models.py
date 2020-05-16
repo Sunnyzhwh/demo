@@ -44,13 +44,13 @@ class User(models.Model):
         #     _profile, _ = Profile.objects.get_or_create(id=self.id)
         #     self._profile = _profile
         if not hasattr(self, '_profile'):
-            self._profile, _ = Profile.objects.get_or_create(id=self.id)
+            self._profile, _ = Profile.get_or_create(id=self.id)
         return self._profile
 
     @property
     def vip(self):
         if not hasattr(self, '_vip'):
-            self._vip = Vip.objects.get(id=self.vip_id)
+            self._vip = Vip.get(id=self.vip_id)
         return self._vip
 
     def __str__(self):
@@ -70,7 +70,7 @@ class User(models.Model):
             # 'birth_year': self.birth_year,
             # 'birth_month': self.birth_month,
             # 'birth_day': self.birth_day,
-            'profile': [self.profile.to_dict()],
+            # 'profile': [self.profile.to_dict()],
         }
         return dicts
 

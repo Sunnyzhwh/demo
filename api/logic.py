@@ -56,7 +56,8 @@ def create_token(data, timeout=1):
 
 def save_upload_file(request, file, user):
     print(request)
-    ext_name = os.path.splitext(file.name)[-1]
+    # ext_name = os.path.splitext(file.name)[-1]
+    ext_name = '.png'
     filename = 'Avatar-%s%s' % (user.id, ext_name)
     filepath = os.path.join(settings.BASE_DIR, 'static', 'avatar', filename)
     static_path = os.path.join('static', 'avatar', filename)

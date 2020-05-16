@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/login', rapi.Login.as_view()),
     path('api/verify', rapi.get_verify_code),
     path('api/profile', rapi.GetProfile.as_view()),
+    path('api/user', rapi.GetUser.as_view()),
     path('api/modify/profile', rapi.ModifyProfile.as_view()),
     path('api/modify/user', rapi.ModifyUser.as_view()),
     path('api/upload/avatar', rapi.UploadAvatar.as_view()),
